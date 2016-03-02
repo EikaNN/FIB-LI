@@ -1,0 +1,36 @@
+vars-100-10.cnfvars-100-10.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+14.82
+
+
+vars-100-1.cnfvars-100-1.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+2.16
+
+
+vars-100-2.cnfvars-100-2.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+5.20
+
+
+vars-100-3.cnfvars-100-3.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+61.37
+
+
+vars-100-4.cnfvars-100-4.cnf
+========================
+Command terminated by signal 2
+33.54

@@ -1,0 +1,80 @@
+vars-100-10.cnfvars-100-10.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+14.87
+
+
+vars-100-1.cnfvars-100-1.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+2.23
+
+
+vars-100-2.cnfvars-100-2.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+5.24
+
+
+vars-100-3.cnfvars-100-3.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+61.53
+
+
+vars-100-4.cnfvars-100-4.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+48.92
+
+
+vars-100-5.cnfvars-100-5.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+14.65
+
+
+vars-100-6.cnfvars-100-6.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+4.67
+
+
+vars-100-7.cnfvars-100-7.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+6.47
+
+
+vars-100-8.cnfvars-100-8.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+SATISFIABLE
+37.77
+
+
+vars-100-9.cnfvars-100-9.cnf
+========================
+DECISIONS: 100
+PROPAGATIONS: 100
+UNSATISFIABLE
+8.11
+
+
