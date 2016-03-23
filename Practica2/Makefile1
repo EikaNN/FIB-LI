@@ -1,0 +1,6 @@
+# si el nombre del archivo es p.pl
+file = p
+
+# esto genera un ejecutable llamado p, que ejecutará el predicado main
+$(file):	$(file).pl
+	swipl -O -q -g main --stand_alone=true -o $(file) -c $(file).pl
