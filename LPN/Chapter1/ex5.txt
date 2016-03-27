@@ -1,0 +1,16 @@
+Exercise 1.5 Suppose we are working with the following knowledge base:
+
+wizard(ron).
+hasWand(harry).
+quidditchPlayer(harry).
+wizard(X) :- hasBroom(X),hasWand(X).
+hasBroom(X) :- quidditchPlayer(X).
+
+How does Prolog respond to the following queries?
+1. wizard(ron). 		-> true
+2. witch(ron). 			-> false
+3. wizard(hermione).	-> false
+4. witch(hermione).		-> false
+5. wizard(harry).		-> true
+6. wizard(Y).			-> Y = ron; Y = harrry.
+7. witch(Y).			-> false

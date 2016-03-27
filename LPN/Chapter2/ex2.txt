@@ -1,0 +1,41 @@
+Exercise 2.2 We are working with the following knowledge base:
+
+house_elf(dobby).
+witch(hermione).
+witch('McGonagall').
+witch(rita_skeeter).
+magic(X) :- house_elf(X).
+magic(X) :- wizard(X).
+magic(X) :- witch(X).
+
+Which of the following queries are satisfied? Where relevant, give all the
+variable instantiations that lead to success.
+
+1. ?- magic(house_elf).
+magic(house_elf) :- house_elf(house_elf) false
+magic(house_elf) :- wizard(house_elf) false
+magic(house_elf) :- witch(house_elf) false
+false
+
+2. ?- wizard(harry).
+false
+
+3. ?- magic(wizard).
+magic(wizard) :- house_elf(wizard) false
+magic(wizard) :- wizard(wizard) false
+magic(wizard) :- witch(wizard) false
+false
+
+4. ?- magic('McGonagall').
+magic('McGonagall') :- house_elf('McGonagall') false
+magic('McGonagall') :- wizard('McGonagall') false
+magic('McGonagall') :- witch('McGonagall') true
+true
+
+5. ?- magic(Hermione).
+magic(Hermione) :- house_elf(Hermione) -> Hermione = dobby
+magic(Hermione) :- wizard(Hermione) false
+magic(Hermione) :- witch(Hermione) -> Hermione = hermione
+									  Hermione = 'McGonagall'
+									  Hermione = rita_skeeter
+									  

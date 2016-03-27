@@ -1,0 +1,20 @@
+Exercise 1.4 Represent the following in Prolog:
+
+1. Butch is a killer.
+killer(butch).
+
+2. Mia and Marcellus are married.
+married(mia, marcellus).
+
+3. Zed is dead.
+dead(zed).
+
+4. Marcellus kills everyone who gives Mia a footmassage.
+kills(marcellus, X) :- footmassage(X, mia)
+
+5. Mia loves everyone who is a good dancer.
+loves(mia, X) :- goodDancer(X).
+
+6. Jules eats anything that is nutritious or tasty.
+eats(jules, X) :- nutritious(X)
+eats(jules, X) :- tasty(X)
