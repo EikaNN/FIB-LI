@@ -105,4 +105,22 @@ suma_ants(L) :-
 %%% Ejercicio 10
 %card(L): Escribe el número de apariciones de cada elemento de L.
 %		  El orden es el mismo en el que aparacen el L.
-card(L) :-
+card([], []).
+card([X|L1], [ [X, N] | L2]) :-
+	card(L1, )
+card([X|L1], [ [X,1] | L2) :-
+	card(L1, L2).
+card(L) :- card(L, A), write(A).
+
+
+
+
+
+
+
+
+
+
+
+
+
