@@ -53,7 +53,7 @@ void setLiteralToTrue(int lit){
 }
 
 
-bool propagateGivesConflict ( ) {
+bool propagateGivesConflict() {
   while ( indexOfNextLitToPropagate < modelStack.size() ) {
     ++indexOfNextLitToPropagate;
     for (uint i = 0; i < numClauses; ++i) {
@@ -73,7 +73,7 @@ bool propagateGivesConflict ( ) {
 }
 
 
-void backtrack(){
+void backtrack() {
   uint i = modelStack.size() -1;
   int lit = 0;
   while (modelStack[i] != 0){ // 0 is the DL mark
@@ -91,14 +91,14 @@ void backtrack(){
 
 
 // Heuristic for finding the next decision literal:
-int getNextDecisionLiteral(){
+int getNextDecisionLiteral() {
   for (uint i = 1; i <= numVars; ++i) // stupid heuristic:
     if (model[i] == UNDEF) return i;  // returns first UNDEF var, positively
   return 0; // reurns 0 when all literals are defined
 }
 
-void checkmodel(){
-  for (int i = 0; i < numClauses; ++i){
+void checkmodel() {
+  for (int i = 0; i < numClauses; ++i) {
     bool someTrue = false;
     for (int j = 0; not someTrue and j < clauses[i].size(); ++j)
       someTrue = (currentValueInModel(clauses[i][j]) == TRUE);
@@ -111,7 +111,7 @@ void checkmodel(){
   }  
 }
 
-int main(){ 
+int main() { 
   readClauses(); // reads numVars, numClauses and clauses
   model.resize(numVars+1,UNDEF);
   indexOfNextLitToPropagate = 0;  

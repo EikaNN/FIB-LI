@@ -106,21 +106,110 @@ suma_ants(L) :-
 %card(L): Escribe el número de apariciones de cada elemento de L.
 %		  El orden es el mismo en el que aparacen el L.
 card([], []).
-card([X|L1], [ [X, N] | L2]) :-
-	card(L1, )
-card([X|L1], [ [X,1] | L2) :-
-	card(L1, L2).
+card([X|L], [ [X, N1] | Ar]) :-
+	card(L, A),
+	pert_con_resto([X|N], A, Ar), !,
+	N1 is N+1.
+card([X|L], [ [X,1] | A]) :-
+	card(L, A).
 card(L) :- card(L, A), write(A).
 
+%%% Ejercicio 11
+%esta_ordenada(L): L está ordenada de menor a mayor
+esta_ordenada([]).
+esta_ordenada([_]) :- !.
+esta_ordenada([X, Y|L]) :- X =< Y, esta_ordenada([Y|L]).
 
+%%% Ejercicio 12
+%ordenacionP(L1, L2): L2 es L1 ordenada de menor a mayor,
+%				      método utilizado: permutaciones
+ordenacionP(L1, L2) :- permutacion(L1, L2), esta_ordenada(L2).
 
+%%% Ejercicio 13
+% esta_ordenada: En el caso peor (lista ordenada) se realizan n-1 comparaciones
+%				 	=> O(n)
+% ordenacion: En el caso peor se prueban todas las posibles permutaciones
+% de n elementos. El número de permutaciones es n! por lo que
+% se realizarán aproximadamente n! comparaciones.
+%			  		=> O(n!)
 
+%%% Ejercicio 14
+%ordenacionI(L1, L2): L2 es L1 ordenada de menor a mayor
+%					  método utilizado: inserción
+%insercion(X, L1, L2): L2 es la lista obtenida al insertar X en su sitio en L1,
+%					   que está ordenada de menor a mayor
+insercion(X, [], [X]).
+insercion(X, [Y|L1], [X, Y|L1]) :- X =< Y.
+insercion(X, [Y|L1], [Y|L2]) :- X > Y, insercion(X, L1, L2). 
 
+ordenacionI([], []).
+ordenacionI([X|L1], L2) :- ordenacionI(L1, Ord), insercion(X, Ord, L2).
 
+%%% Ejercicio 15
+% En el caso peor el algoritmo de inserción puede llegar a hacer un
+% número cuadrático de comparaciones. Se produce cuando la lista está
+% ordenada de mayor a menor
 
+%%% Ejercicio 16
+%ordenacionM(L1, L2): L2 es L1 ordenada de menor a mayor
+%					  método utilizado: mergesort
+%merge(L1, L2, L3): L3 es la lista obtenida al fusionar L1 y L2
+%split(L, L1, L2): L1 y L2 son una partición de L
+merge([], L, L) :- !.
+merge(L, [], L) :- !.
+merge([X|L1], [Y|L2], [X|L3]) :- X =< Y, !, merge(L1, [Y|L2], L3).
+merge([X|L1], [Y|L2], [Y|L3]) :- merge([X|L1], L2, L3).
 
+split([], [], []).
+split([X], [X], []).
+split([X, Y|L], [X|L1], [Y|L2]) :- split(L, L1, L2).
 
+mergesort([], []) :- !.
+mergesort([X], [X]) :- !.
+mergesort(L, Ord) :-
+	split(L, L1, L2),
+	mergesort(L1, Ord1),
+	mergesort(L2, Ord2),
+	merge(Ord1, Ord2, Ord).
 
+ordenacionM(L1, L2) :- mergesort(L1, L2).
 
+%%% Ejercicio 17
+%diccionario(A, N): Dado un alfabeto de A símbolos y un natural N,
+%					escribe todas las palabras de N símbolos
+%diccionario()
 
+nmembers(_, 0, []) :- !.
+nmembers(A, N, [S|L]) :-
+	pert(S, A),
+	N1 is N-1,
+	nmembers(A, N1, L).
 
+writeList([]) :- write(' '), !.
+writeList([X|L]) :- write(X), writeList(L).
+
+diccionario(A, N) :-
+	nmembers(A, N, L),
+	writeList(L), fail.
+
+%%% Ejercicio 18
+%palindromos(L): Dada una lista de letras L, escribe todas las permutaciones
+%			     de sus elementos que sean palíndromos
+%es_palindromo(L): Cierto si L es un palíndromo
+es_palindromo([]).
+es_palindromo([_]) :- !.
+es_palindromo([X|L]) :- concat(L1, [X], L), es_palindromo(L1).
+
+palindromos(L) :-
+	permutacion(L, P),
+	es_palindromo(P),
+	write(P), nl, fail.
+
+%%% Ejercicio 19
+%suma(L1, L2, S): L3 es la suma de las listas L1 y L2, que son interpretadas
+% 				   como un solo dígito
+suma([], [], 0, C, C).
+suma([X|L1], [Y|L2], S) :-
+	S1 is S-X-Y
+	suma(L1, L2, S1),
+	S is X+Y+S1. 
