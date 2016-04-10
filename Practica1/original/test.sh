@@ -42,9 +42,9 @@ do
 		echo "INF" >> $RESUM
 		echo -e "\tINF"
 	else
-		echo $(echo "scale=2;$OUR_TIME/$PICO_TIME" | bc -l) >> $RESUM
+		echo $(echo "$OUR_TIME/$PICO_TIME" | bc -l) >> $RESUM
 		echo -ne "\t"
-		echo $(echo "scale=2;$OUR_TIME/$PICO_TIME" | bc -l)
+		echo $(echo "$OUR_TIME/$PICO_TIME" | bc -l)
 	fi
 	echo -ne "\n" >> $RESUM
 done
