@@ -1,5 +1,0 @@
-vars-100-10.cnf	14.82
-vars-100-1.cnf	2.16
-vars-100-2.cnf	5.20
-vars-100-3.cnf	61.37
-vars-100-4.cnf	
