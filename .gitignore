@@ -28,5 +28,5 @@
 *.app
 
 # Result files
-resum+.txt
-resultats+.txt
+resum[0-9].txt
+resultats[0-9].txt

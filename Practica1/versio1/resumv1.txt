@@ -21,7 +21,7 @@ vars-100-2.cnf
 Decisions: 15392
 Propagations: 245279
 SATISFIABLE
-0.29
+0.28
 0.00
 INF
 
@@ -30,7 +30,7 @@ vars-100-3.cnf
 Decisions: 192527
 Propagations: 3016018
 UNSATISFIABLE
-3.45
+3.47
 0.00
 INF
 
@@ -39,7 +39,7 @@ vars-100-4.cnf
 Decisions: 160818
 Propagations: 2312922
 UNSATISFIABLE
-2.44
+2.80
 0.00
 INF
 
@@ -75,7 +75,7 @@ vars-100-8.cnf
 Decisions: 123470
 Propagations: 1815567
 SATISFIABLE
-2.05
+2.09
 0.00
 INF
 
