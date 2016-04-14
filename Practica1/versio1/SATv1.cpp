@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
+#include <queue>
 using namespace std;
 
 // defines
@@ -14,6 +15,7 @@ using namespace std;
 typedef long long LL;
 typedef vector<int> VI;
 typedef vector<VI> VVI;
+typedef pair<int,int> PII;
 
 // structs
 struct Variable {
@@ -33,17 +35,23 @@ uint decisionLevel;
 LL numPropagations;
 LL numDecisions;
 vector<Variable> variables;
+vector<PII> bestVar;
 
 
 void initialize() {
   clauses.resize(numClauses);
   model.resize(numVars+1,UNDEF);
   variables.resize(numVars+1);
+  bestVar.resize(numVars+1);
   for (uint i = 1; i <= numVars; ++i) variables[i].count = 0;
   indexOfNextLitToPropagate = 0;  
   decisionLevel = 0;
   numDecisions = 0;
   numPropagations = 0;  
+}
+
+inline bool comp(const PII& a, const PII& b) {
+  return a.second > b.second;
 }
 
 void readClauses() {
@@ -58,16 +66,22 @@ void readClauses() {
   cin >> aux >> numVars >> numClauses;
   initialize();
   // Read clauses
-  for (uint i = 0; i < numClauses; ++i) {
+  for (int i = 0; i < numClauses; ++i) {
     int lit;
-    for (uint j = 0; j < CLAUSE_SIZE; ++j) {
+    for (int j = 0; j < CLAUSE_SIZE; ++j) {
       cin >> lit;
       clauses[i].push_back(lit);
-      if (lit > 0) {variables[lit].positiveLit.push_back(i); ++variables[lit].count;}
-      else {variables[-lit].negativeLit.push_back(i); ++variables[-lit].count;}
+      if (lit > 0) variables[lit].positiveLit.push_back(i);
+      else variables[-lit].negativeLit.push_back(i);
     }
     cin >> lit; //Read last 0
-  }    
+  }
+  for (int i = 1; i <= numVars; ++i) {
+    int count = variables[i].positiveLit.size() + variables[i].negativeLit.size();
+    variables[i].count = count;
+    bestVar[i] = PII(i, count);
+  }
+  sort(bestVar.begin()+1, bestVar.end(), comp);    
 }
 
 
@@ -121,7 +135,7 @@ bool propagateGivesConflict() {
 void backtrack() {
   uint i = modelStack.size() -1;
   int lit = 0;
-  while (modelStack[i] != 0){ // 0 is the DL mark
+  while (modelStack[i] != 0) { // 0 is the DL mark
     lit = modelStack[i];
     model[abs(lit)] = UNDEF;
     modelStack.pop_back();
@@ -137,8 +151,10 @@ void backtrack() {
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral() {
-  for (uint i = 1; i <= numVars; ++i) // stupid heuristic:
-    if (model[i] == UNDEF) return i;  // returns first UNDEF var, positively
+  for (uint i = 1; i <= numVars; ++i) {
+    int var = bestVar[i].first;
+    if (model[var] == UNDEF) return var;  // returns first UNDEF var, positively
+  }
   return 0; // returns 0 when all literals are defined
 }
 
@@ -171,7 +187,7 @@ int main() {
   // DPLL algorithm
   while (true) {
     while ( propagateGivesConflict() ) {
-      if ( decisionLevel == 0) { 
+      if ( decisionLevel == 0 ) { 
       	cout << "Decisions: " << numDecisions << endl;
       	cout << "Propagations: " << numPropagations << endl;
       	cout << "UNSATISFIABLE" << endl; 
