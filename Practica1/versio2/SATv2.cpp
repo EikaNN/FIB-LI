@@ -15,13 +15,14 @@ using namespace std;
 typedef long long LL;
 typedef vector<int> VI;
 typedef vector<VI> VVI;
-typedef pair<int,int> PII;
 
 // structs
 struct Variable {
-  VI positiveLit;
-  VI negativeLit;
-  LL count;
+  VI posLit;              // clauses where variable appears as positive litteral
+  VI negLit;              // clauses where variable appears as negative litteral
+  LL iniScore;            // initial score
+  LL decAct;              // activity during this decision
+  LL globAct;             // global activity
 };
 
 uint numVars;
@@ -35,23 +36,16 @@ uint decisionLevel;
 LL numPropagations;
 LL numDecisions;
 vector<Variable> variables;
-vector<PII> bestVar;
 
 
 void initialize() {
   clauses.resize(numClauses);
   model.resize(numVars+1,UNDEF);
   variables.resize(numVars+1);
-  bestVar.resize(numVars+1);
-  for (uint i = 1; i <= numVars; ++i) variables[i].count = 0;
   indexOfNextLitToPropagate = 0;  
   decisionLevel = 0;
   numDecisions = 0;
   numPropagations = 0;  
-}
-
-inline bool comp(const PII& a, const PII& b) {
-  return a.second > b.second;
 }
 
 void readClauses() {
@@ -71,17 +65,17 @@ void readClauses() {
     for (int j = 0; j < CLAUSE_SIZE; ++j) {
       cin >> lit;
       clauses[i].push_back(lit);
-      if (lit > 0) variables[lit].positiveLit.push_back(i);
-      else variables[-lit].negativeLit.push_back(i);
+      if (lit > 0) variables[lit].posLit.push_back(i);
+      else variables[-lit].negLit.push_back(i);
     }
     cin >> lit; //Read last 0
   }
   for (int i = 1; i <= numVars; ++i) {
-    int count = variables[i].positiveLit.size() + variables[i].negativeLit.size();
-    variables[i].count = count;
-    bestVar[i] = PII(i, count);
-  }
-  sort(bestVar.begin()+1, bestVar.end(), comp);    
+    variables[i].iniScore = variables[i].posLit.size() + variables[i].negLit.size();
+    variables[i].globAct = 0;
+    variables[i].decAct = 0;
+    //cout << variables[i].iniScore << endl;
+  }   
 }
 
 
@@ -112,8 +106,15 @@ bool propagateLitConflict(const VI& clauseList) {
       else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[c][j]; }
     }
     if (not someLitTrue and numUndefs == 0) return true; // conflict!
-    else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);  
-  }
+
+    if (numUndefs == 2) {
+      for (int j = 0; j < CLAUSE_SIZE; ++j) {
+        int val = currentValueInModel(clauses[c][j]);
+        if (val == UNDEF) variables[abs(clauses[c][j])].decAct += 1;
+      }
+    }
+    else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);
+  }  
   return false;
 } 
 
@@ -123,10 +124,10 @@ bool propagateGivesConflict() {
     ++indexOfNextLitToPropagate;
     ++numPropagations;
     if (lit < 0) {
-      if (propagateLitConflict(variables[-lit].positiveLit)) return true;
+      if (propagateLitConflict(variables[-lit].posLit)) return true;
     }
     else {
-      if (propagateLitConflict(variables[lit].negativeLit)) return true;
+      if (propagateLitConflict(variables[lit].negLit)) return true;
     }
   }
   return false;
@@ -138,6 +139,8 @@ void backtrack() {
   while (modelStack[i] != 0) { // 0 is the DL mark
     lit = modelStack[i];
     model[abs(lit)] = UNDEF;
+    variables[abs(lit)].globAct -= variables[abs(lit)].decAct;
+    variables[abs(lit)].decAct = 0;
     modelStack.pop_back();
     --i;
   }
@@ -151,11 +154,28 @@ void backtrack() {
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral() {
-  for (uint i = 1; i <= numVars; ++i) {
-    int var = bestVar[i].first;
-    if (model[var] == UNDEF) return var;  // returns first UNDEF var, positively
+  int var = 0;
+  LL maxScore = 0;
+  LL maxActivity = 0;
+  for (int i = 1; i <= numVars; ++i) {
+    variables[i].globAct += variables[i].decAct;
+    //variables[i].decAct = 0;
+    if (model[i] == UNDEF and variables[i].iniScore > maxScore) {
+      var = i;
+      maxScore = variables[var].iniScore;
+      maxActivity = variables[var].globAct;
+    }
+    else if (model[i] == UNDEF and variables[i].iniScore == maxScore) {
+      if (variables[var].globAct > maxActivity) {
+        var = i;
+        maxActivity = variables[var].globAct;
+      }
+    }
   }
-  return 0; // returns 0 when all literals are defined
+  if (var == 0) return 0; // returns 0 when all literals are defined 
+
+  if (variables[var].posLit.size() > variables[var].negLit.size()) return var;
+  else return -var; 
 }
 
 void checkmodel() {
@@ -184,8 +204,16 @@ int main() {
       else if (val == UNDEF) setLiteralToTrue(lit);
     }
   
+  int prova = 0;
   // DPLL algorithm
   while (true) {
+    //++prova;
+    if (prova == -1) {
+      for (int i = 1; i <= numVars; ++i) {
+        variables[i].iniScore /= 1;
+      }
+      prova = 0;
+    }
     while ( propagateGivesConflict() ) {
       if ( decisionLevel == 0 ) { 
       	cout << "Decisions: " << numDecisions << endl;

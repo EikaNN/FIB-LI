@@ -39,8 +39,13 @@ do
 	PICO_TIME=$(tac $RESUM | egrep -m 1 . | awk '{ print $NF }' )
 	echo -ne "\t$PICO_TIME"
 	if [ "$PICO_TIME" = "0.00" ]; then
-		echo "INF" >> $RESUM
-		echo -e "\tINF"
+		if [ "$OUR_TIME" = "0.00" ]; then
+			echo "1.00" >> $RESUM
+			echo -e "\t1.00"
+		else
+			echo "INF" >> $RESUM
+			echo -e "\tINF"
+		fi
 	else
 		echo $(echo "scale=2;$OUR_TIME/$PICO_TIME" | bc -l) >> $RESUM
 		echo -ne "\t"
