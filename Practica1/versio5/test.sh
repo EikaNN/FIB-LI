@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Variables
-FILES=../random3SAT
+FILES=../random3SAT-100
 RESULTATS=resultats$2.txt
 RESUM=resum$2.txt
 
