@@ -210,6 +210,6 @@ palindromos(L) :-
 % 				   como un solo dígito
 suma([], [], 0, C, C).
 suma([X|L1], [Y|L2], S) :-
-	S1 is S-X-Y
+	S1 is S-X-Y,
 	suma(L1, L2, S1),
 	S is X+Y+S1. 
