@@ -4,7 +4,7 @@ camino(EstadoActual, EstadoFinal, CaminoHastaAhora, CaminoTotal):-
 	\+member(EstSiguiente,CaminoHastaAhora),
 	camino(EstSiguiente, EstadoFinal, [EstSiguiente|CaminoHastaAhora], CaminoTotal).
 
-solucionOptima(N, P, [Fi, Ci], [Ff, Cf]):-
+solucion(N, P, [Fi, Ci], [Ff, Cf]):-
 	tamano(N),
 	camino([Fi,Ci], [Ff,Cf], [[Fi,Ci]], C),
 	P1 is P+1,

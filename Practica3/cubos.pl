@@ -13,9 +13,12 @@ solucionOptima:-
 	length(C,N),
 	write(C).
 
+%estado
+% [litros_cubo5, litros_cubo8]
+
 %llenar cubo5
 unPaso([_, Y], [5, Y]).
-%vaciar cubo8
+%vaciar cubo5
 unPaso([_, Y], [0, Y]).
 
 %llenar cubo8
