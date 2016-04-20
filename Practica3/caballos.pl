@@ -5,7 +5,6 @@ camino(EstadoActual, EstadoFinal, CaminoHastaAhora, CaminoTotal):-
 	camino(EstSiguiente, EstadoFinal, [EstSiguiente|CaminoHastaAhora], CaminoTotal).
 
 solucion(N, P, [Fi, Ci], [Ff, Cf]) :-
-	tamano(N),
 	camino([Fi,Ci], [Ff,Cf], [[Fi,Ci]], C),
 	P1 is P+1,
 	length(C, P1),

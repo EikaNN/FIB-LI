@@ -16,6 +16,6 @@ naiverev([],[]).
 naiverev([H|T],R) :- naiverev(T,RevT),myAppend(RevT,[H],R).
 
 %rev(L, R): R is the reverse of L
-accRev([H|T],A,R) :- accRev(T,[H|A],R).
 accRev([],A,A).
+accRev([H|T],A,R) :- accRev(T,[H|A],R).
 rev(L,R) :- accRev(L,[],R).
