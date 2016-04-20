@@ -1,14 +1,17 @@
-camino(E, E, C, C, _).
-camino(EstadoActual, EstadoFinal, CaminoHastaAhora, CaminoTotal, [Accion|Acciones]):-
-	unPaso(EstadoActual, EstSiguiente, Accion),
-	\+member(EstSiguiente,CaminoHastaAhora),
-	camino(EstSiguiente, EstadoFinal, [EstSiguiente|CaminoHastaAhora], CaminoTotal, Acciones).
-
 solve(Balls):-
-	camino(Balls, [_], [], _, Acciones),
-	write(Acciones).
+	camino(Balls, [_], Acciones),
+	displaySol(Acciones).
 
-unPaso(Balls, [ [X3,Y3] | R2 ], [ [X1, X2], [X2,Y2] ]) :-
+camino(E, E, []).
+camino(EstadoActual, EstadoFinal, [Accion|Acciones]):-
+	unPaso(EstadoActual, EstSiguiente, Accion),
+	camino(EstSiguiente, EstadoFinal, Acciones).
+
+displaySol([]).
+displaySol([ [X,Y] | L ]) :- 
+	write(X), write(' jumps over '), write(Y), nl, displaySol(L).
+
+unPaso(Balls, [ [X3,Y3] | R2 ], [ [X1, Y1], [X2,Y2] ]) :-
 	pert_con_resto([X1,Y1], Balls, R1),
 	pert_con_resto([X2,Y2], R1, R2),
 	jump(X, Y),
@@ -22,7 +25,6 @@ jump(1, 0).
 jump(-1, 0).
 jump(1, 1).
 jump(-1, -1).
-
 
 %%% Funciones auxiliares
 
