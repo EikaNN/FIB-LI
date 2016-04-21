@@ -193,7 +193,7 @@ int main() {
   // DPLL algorithm
   while (true) {
   	++counter;
-  	if (counter == 1000) {
+  	if (counter == 10000) {
   		for (int i = 1; i <= numVars; ++i) {
   			variables[i].score /= 2;
   		}

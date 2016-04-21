@@ -1,24 +1,16 @@
 #! /bin/bash
 
 # Variables
-FILES=../random3SAT
+FILES=random3SAT
 RESULTATS=resultats$2.txt
 RESUM=resum$2.txt
-
+TAULA=taula$2.csv
 
 function usage() {
 	echo "Illegal number of arguments"
 	echo "usage: $./test.sh sat_executable file_id"
 	exit 1
 }
-
-function writeResults() {
-	while read line; do
-  		echo -n "$line" >> $TAULA
-  		echo
-		done < plantilla.txt
-}
-
 
 if [ "$#" -ne 2 ]; then
     usage
@@ -75,3 +67,5 @@ fi
 echo "########################################"
 echo "#############TEST HAS ENDED#############"
 echo "########################################"
+
+./parse.py $RESUM

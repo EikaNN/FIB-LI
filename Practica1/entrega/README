@@ -1,0 +1,15 @@
+In this directory there are all necessary files to execute SAT solver.
+There are auxiliary files such as picoSAT.txt, parse.py, random3SAT which are used by the script.
+
+To execute, simply run test script. It needs 2 parameters:
+	- executable file
+	- file_id (symbol appended at the end of each generated filename, to avoid overriding files when doing a new test) 
+
+For example: ./test.sh mySAT.exe 1
+
+This script will show information while executing and will generate 3 files:
+	- resum<file_id>.txt: for each test, show all information about mySAT
+	- resultats<file_id>.txt: for each test show its solution
+	- taula<file_id>.csv: table with all information about both mySAT and picosat
+
+There is already a sample of those 3 files, generated in FIB.
