@@ -37,11 +37,15 @@ tvMatch(S-T):- tvTeams(TV), member(S,TV), member(T,TV), S\=T.
 
 
 writeClauses:- 
-    defineHome,
+    defineHome,                 %definition of playing at home
+    defineDouble,               %definition of double
     eachTExactlyOneMatchPerR,   %each team plays exactly one game per round
-    eachTAgainstEachOther.      %each team plays against each other exactly once
+    eachTAgainstEachOtherOnce,  %each team plays against each other exactly once
+    eachRExactlyOneTvMatch,     %each round has exactly one tv match
+    eachTAtMostOneDouble,       %each team plays at most one double
+    noDoublesOnRounds_2_15.     %there are no doubles on rounds 2 and 15
 
-defineHome:-
+defineHome :-
     team(T), round(R), 
     findall(match-T-S-R, matchOfT(T,T-S), Lits),
     expressOr(home-T-R, Lits), fail.
@@ -55,17 +59,44 @@ eachTExactlyOneMatchPerR :-
     exactly(1,Lits), fail.
 eachTExactlyOneMatchPerR.
 
-eachTAgainstEachOther :-
-    team(T), team(S), S\=T,
-    findall(match-T-S-R, matchOfT(T, T-S), Lits1),
-    findall(match-S-T-R, matchOfT(T, S-T), Lits2),
-    append(Lits1, Lits2, Lits),
+eachTAgainstEachOtherOnce :-
+    team(T),
+    matchOfT(T, T-S),
+    findall(match-T-S-R, round(R), Lits1),
+    findall(match-S-T-R, round(R), Lits2),
+    append(Lits1,Lits2,Lits),
     exactly(1,Lits), fail.
-eachTAgainstEachOther.
+eachTAgainstEachOtherOnce.
 
-%eachTeamAtMostOneDouble:-
-%    team(T), round(R),
-%    findall(match-)
+eachRExactlyOneTvMatch :-
+    round(R),
+    findall(match-S-T-R, tvMatch(S-T), Lits),
+    exactly(1,Lits), fail.
+eachRExactlyOneTvMatch.
+
+defineDouble :-
+    team(T), round(R),
+    Rprev is R-1,
+    writeClause([home-T-Rprev,home-T-R,double-T-R]),
+    writeClause([\+home-T-Rprev,\+home-T-R,double-T-R]),
+    writeClause([\+home-T-Rprev,home-T-R,\+double-T-R]),
+    writeClause([home-T-Rprev,\+home-T-R,\+double-T-R]),
+    fail.
+defineDouble.
+
+eachTAtMostOneDouble:-
+    team(T),
+    findall(double-T-R, round(R), Lits),
+    atMost(1,Lits), fail.
+eachTAtMostOneDouble.
+
+noDoublesOnRounds_2_15:-
+    team(T),
+    findall(double-T-2, round(2), Lits1),
+    findall(double-T-15, round(15), Lits2),
+    append(Lits1,Lits2,Lits),
+    exactly(0,Lits), fail.
+noDoublesOnRounds_2_15.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:

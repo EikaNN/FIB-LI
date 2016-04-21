@@ -1,12 +1,12 @@
 numNutrients(8).
-product(milk,[2,4,6]).
+product(milk,[2,4,6]).		%milk has nutrients 2, 4 and 6
 product(meat,[1,8]).
 product(eggs,[3,4,5,6]).
 product(pear,[7,1,2]).
 product(cake,[1,5,4,2]).
 
 shopping(K,L) :-
-	findall((X,Y),product(X,Y),AllProducts),
+	findall( (X,Y), product(X,Y), AllProducts),
 	subcjto(AllProducts,L),
 	length(L,LenL), LenL =< K,
 	getNutrients(L,Nutr),
@@ -19,10 +19,7 @@ getNutrients([ (_,L) | T], N) :-
 	append(L, Nutrients, N).
 
 %allNutrients(N,L): holds if all N nutrients appear at least once in L
-allNutrients(N,L) :- set(L,S), length(S,N).
-
-%displaySol([]).
-%displaySol([(P,L) | T]) :- write(P), write(' '), write(L), nl, displaySol(T).	
+allNutrients(N,L) :- set(L,S), length(S,N).	
 
 %%% Auxiliary functions
 
