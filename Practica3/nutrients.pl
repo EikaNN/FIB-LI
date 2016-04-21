@@ -6,28 +6,23 @@ product(pear,[7,1,2]).
 product(cake,[1,5,4,2]).
 
 shopping(K,L) :-
-	getProducts(AllProducts), 
-	subcjto(AllProducts,Products),
-	length(Products,LenProducts), LenProducts =< K,
-	getNutrients(Products,Nutrients),
-	numNutrients(N), allNutrients(N, Nutrients),
-	displaySol(Products).
-
-getProducts([product(X,Y)|AllProducts]) :-
-	product(X,Y),
-	\+member(product(X,Y),AllProducts).
+	findall((X,Y),product(X,Y),AllProducts),
+	subcjto(AllProducts,L),
+	length(L,LenL), LenL =< K,
+	getNutrients(L,Nutr),
+	numNutrients(N), allNutrients(N, Nutr).
 
 %getNutrients(L,N) :- N is a list of all nutrients of each product of L
 getNutrients([],[]).
-getNutrients([product(_,L) | T], N) :-
+getNutrients([ (_,L) | T], N) :-
 	getNutrients(T, Nutrients),
 	append(L, Nutrients, N).
 
 %allNutrients(N,L): holds if all N nutrients appear at least once in L
 allNutrients(N,L) :- set(L,S), length(S,N).
 
-displaySol([]).
-displaySol([product(P,L) | T]) :- write(P), write(' '), write(L), nl, displaySol(T).	
+%displaySol([]).
+%displaySol([(P,L) | T]) :- write(P), write(' '), write(L), nl, displaySol(T).	
 
 %%% Auxiliary functions
 

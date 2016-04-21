@@ -38,10 +38,34 @@ tvMatch(S-T):- tvTeams(TV), member(S,TV), member(T,TV), S\=T.
 
 writeClauses:- 
     defineHome,
-    ...
+    eachTExactlyOneMatchPerR,   %each team plays exactly one game per round
+    eachTAgainstEachOther.      %each team plays against each other exactly once
 
-defineHome:- team(T), round(R), findall( match-T-S-R, matchOfT(T,T-S), Lits ), expressOr( home-T-R, Lits ), fail.
+defineHome:-
+    team(T), round(R), 
+    findall(match-T-S-R, matchOfT(T,T-S), Lits),
+    expressOr(home-T-R, Lits), fail.
 defineHome.
+
+eachTExactlyOneMatchPerR :-
+    team(T), round(R),
+    findall(match-T-S-R, matchOfT(T,T-S), Lits1),
+    findall(match-S-T-R, matchOfT(T,S-T), Lits2),
+    append(Lits1, Lits2, Lits),
+    exactly(1,Lits), fail.
+eachTExactlyOneMatchPerR.
+
+eachTAgainstEachOther :-
+    team(T), team(S), S\=T,
+    findall(match-T-S-R, matchOfT(T, T-S), Lits1),
+    findall(match-S-T-R, matchOfT(T, S-T), Lits2),
+    append(Lits1, Lits2, Lits),
+    exactly(1,Lits), fail.
+eachTAgainstEachOther.
+
+%eachTeamAtMostOneDouble:-
+%    team(T), round(R),
+%    findall(match-)
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
