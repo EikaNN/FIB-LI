@@ -40,6 +40,9 @@ room(R):-    rooms(N), between(1,N,R).
 day(D):-     between(1,5,D).
 hour(H):-    between(1,5,H).
 
+rooms(C, R) :- courseRooms(C, L), member(R, L).
+courses(S, C) :- student(S, L), member(C, L).
+
 %%%%%%  Variables: It is mandatory to use these variables!
 % courseHour-C-D-H   meaning "course C is given on day D at hour H"
 % courseRoom-C-R     meaning "course C is given at room R"
@@ -48,8 +51,9 @@ hour(H):-    between(1,5,H).
 writeClauses:-
     eachCExactly3H,         % each course has 3 teaching hours per week
     eachC3DifferentD,       % each course hour is distributed in 3 different days
-    eachCExactly1R,         % each course has exactly one room assigned
-    eachRAtMost1CPerH.     % each room can host one course at most on same day and hour
+    eachCExactly1R,         % each course has exactly one valid room assigned
+    eachRAtMost1CPerH,      % each room can host one course at most on same day and hour
+    noOverlappingC.			% each student has no overlapping courses in his schedule
 
 eachCExactly3H :-
     course(C),
@@ -65,16 +69,28 @@ eachC3DifferentD.
 
 eachCExactly1R :-
     course(C),
-    findall(courseRoom-C-R, room(R), Lits),
+    findall(courseRoom-C-R, rooms(C, R), Lits),
     exactly(1, Lits), fail.
 eachCExactly1R.
 
 eachRAtMost1CPerH :-
-    room(R),
-    findall(courseRoom-C-R, course(C), Lits),
-    findall(courseHour-C-D-H, ),
-    atMost(1, Lits).
+	day(D), hour(H), room(R), course(C1), course(C2), C1 \= C2,
+	writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H, \+courseRoom-C1-R, \+courseRoom-C2-R]),
+	fail.
 eachRAtMost1CPerH.
+
+noOverlappingC :-
+	student(S), day(D), hour(H),
+	findall(courseHour-C-D-H, (courses(S, C)), Lits),
+	atMost(1, Lits), fail.
+noOverlappingC.
+
+%noOverlappingC :-
+%	student(S), day(D), hour(H), courses(S, C1), courses(S, C2), C1 \= C2,
+%	writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H]),
+%	fail.
+%noOverlappingC.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
