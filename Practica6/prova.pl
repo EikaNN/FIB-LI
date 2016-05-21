@@ -7,3 +7,13 @@ matrixByRows([], _, []) :- !.
 matrixByRows(L, NumCols, [FirstN | MatrixByRows]) :- 
 	splitAt(NumCols, L, FirstN, Rest),
 	matrixByRows(Rest, NumCols, MatrixByRows).
+
+test(N) :- N < 9.
+
+f(L, N) :- sum(L, #=, N).
+
+
+
+
+
+

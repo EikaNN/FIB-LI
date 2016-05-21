@@ -34,6 +34,7 @@ p:-	ejemplo1(RowSums,ColSums),
 	matrixByRows(L,NumCols,MatrixByRows),
 	transpose(MatrixByRows, MatrixByCols),
 	declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums),
+	labeling([ff], MatrixByRows),
 	pretty_print(RowSums,ColSums,MatrixByRows).
 
 
@@ -56,5 +57,16 @@ matrixByRows(L, NumCols, [FirstN | MatrixByRows]) :-
 	splitAt(NumCols, L, FirstN, Rest),
 	matrixByRows(Rest, NumCols, MatrixByRows).
 
+correctSum(L, N) :- sum(L, #=, N).
+
 declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums) :-
-	member(X, MatrixByRows), sumlist(X) #= nth1(N)
+	maplist(correctSum, MatrixByRows, RowSums),
+	maplist(correctSum, MatrixByCols, ColSums).
+
+%declareConstraints([MR|MatrixByRows], [MC|MatrixByCols], [RS|RowSums], [CS|ColSums]) :-
+%	sum(MR, #=, RS),
+%	sum(MC, #=, CS),
+%	declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums).
+%declareConstraints([], [], [], []).
+
+main :- p.
