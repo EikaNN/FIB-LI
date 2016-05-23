@@ -53,10 +53,14 @@ writeClauses:-
     eachC3DifferentD,       % each course hour is distributed in 3 different days
     eachCExactly1R,         % each course has exactly one valid room assigned
     eachRAtMost1CPerH,      % each room can host one course at most on same day and hour
+<<<<<<< HEAD
     noOverlappingC,			% each student has no overlapping courses in his schedule
     eachSatMost3HperD,      % each student has at most 3 hours per day
     defineLate,             % definition of late-D
     temp.
+=======
+    noOverlappingC.			% each student has no overlapping courses in his schedule
+>>>>>>> d8a80b6f0ed20a52d5522ceecebc9e0c4c464029
 
 eachCExactly3H :-
     course(C),
@@ -88,6 +92,7 @@ noOverlappingC :-
 	atMost(1, Lits), fail.
 noOverlappingC.
 
+<<<<<<< HEAD
 eachSatMost3HperD :-
     student(S), day(D),
     findall(courseHour-C-D-H, (courses(S, C), hour(H)), Lits),
@@ -105,6 +110,14 @@ temp :-
     findall(late-D, day(D), Lits),
     atMost(0, Lits), fail.
 temp.
+=======
+%noOverlappingC :-
+%	student(S), day(D), hour(H), courses(S, C1), courses(S, C2), C1 \= C2,
+%	writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H]),
+%	fail.
+%noOverlappingC.
+
+>>>>>>> d8a80b6f0ed20a52d5522ceecebc9e0c4c464029
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
