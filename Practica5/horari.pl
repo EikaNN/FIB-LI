@@ -48,19 +48,15 @@ courses(S, C) :- student(S, L), member(C, L).
 % courseRoom-C-R     meaning "course C is given at room R"
 % late-D             meaning "there is some course at 13:00 on day D"
 
-writeClauses:-
+writeClauses(K):-
     eachCExactly3H,         % each course has 3 teaching hours per week
     eachC3DifferentD,       % each course hour is distributed in 3 different days
     eachCExactly1R,         % each course has exactly one valid room assigned
     eachRAtMost1CPerH,      % each room can host one course at most on same day and hour
-<<<<<<< HEAD
     noOverlappingC,			% each student has no overlapping courses in his schedule
     eachSatMost3HperD,      % each student has at most 3 hours per day
     defineLate,             % definition of late-D
-    temp.
-=======
-    noOverlappingC.			% each student has no overlapping courses in his schedule
->>>>>>> d8a80b6f0ed20a52d5522ceecebc9e0c4c464029
+    atMostKLates(K).        % at mot k late days
 
 eachCExactly3H :-
     course(C),
@@ -92,7 +88,6 @@ noOverlappingC :-
 	atMost(1, Lits), fail.
 noOverlappingC.
 
-<<<<<<< HEAD
 eachSatMost3HperD :-
     student(S), day(D),
     findall(courseHour-C-D-H, (courses(S, C), hour(H)), Lits),
@@ -106,18 +101,11 @@ defineLate :-
     writeClause([\+courseHour-C-D-5, late-D]), fail.
 defineLate.
 
-temp :-
+atMostKLates(K) :-
     findall(late-D, day(D), Lits),
-    atMost(0, Lits), fail.
-temp.
-=======
-%noOverlappingC :-
-%	student(S), day(D), hour(H), courses(S, C1), courses(S, C2), C1 \= C2,
-%	writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H]),
-%	fail.
-%noOverlappingC.
+    atMost(K, Lits), fail.
+atMostKLates(_).
 
->>>>>>> d8a80b6f0ed20a52d5522ceecebc9e0c4c464029
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
@@ -177,19 +165,38 @@ subsetOfSize(N,[_|L],   S ):-            length(L,Leng), Leng>=N,  subsetOfSize(
 
 %%%%%% main:
 
-main:-  symbolicOutput(1), !, writeClauses, halt.   % print the clauses in symbolic form and halt
-main:-  initClauseGeneration,
-        tell(clauses), writeClauses, told,          % generate the (numeric) SAT clauses and call the solver
+main :-  symbolicOutput(1), !, writeClauses, halt.   % print the clauses in symbolic form and halt
+main :- minimize(5).
+
+minimize(K):-  
+    initClauseGeneration,
+    tell(clauses), writeClauses(K), told,          % generate the (numeric) SAT clauses and call the solver
     tell(header),  writeHeader,  told,
     numVars(N), numClauses(C),
     write('Generated '), write(C), write(' clauses over '), write(N), write(' variables. '),nl,
-    shell('cat header clauses > infile.cnf',_),
-    write('Calling solver....'), nl, 
-    shell('picosat -v -o model infile.cnf', Result),  % if sat: Result=10; if unsat: Result=20.
-    treatResult(Result),!.
+    shell('cat header clauses > infile.cnf'),
+    write('late-D can be at most '), write(K), nl,
+    write('Calling solver....'), nl,
+    shell('picosat -v -l 100000 -o model infile.cnf', Result),  % if sat: Result=10; if unsat: Result=20.
+    treatResult(Result, K), !.
 
-treatResult(20):- write('Unsatisfiable'), nl, halt.
-treatResult(10):- write('Solution found: '), nl, see(model), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
+writeBest(1) :- 
+    write('Solution found with 1 late day:'), nl,
+    see(bestModel), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
+
+writeBest(K) :- 
+    write('Solution found with '), write(K), write(' late days:'), nl,
+    see(bestModel), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
+
+treatResult(0, 5) :- write('Probably unsatisfiable(decision limit exceeded)'), nl, halt.
+treatResult(0, K) :- write('Probably unsatisfiable(decision limit exceeded)'), nl, nl, nl, K1 is K+1, writeBest(K1).
+treatResult(20, 5) :- write('Unsatisfiable'), nl, halt.
+treatResult(20, K) :- write('UNSATISFIABLE'), nl, nl, K1 is K+1, writeBest(K1).
+treatResult(10, 0) :- write('Solution found with no late days: '), nl, see(model), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
+treatResult(10, K) :- write('SATISFIABLE'), nl, nl, K1 is K-1, shell('cp model bestModel'), minimize(K1).
+
+%treatResult(20):- write('Unsatisfiable'), nl, halt.
+%treatResult(10):- write('Solution found: '), nl, see(model), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
 
 initClauseGeneration:-  %initialize all info about variables and clauses:
     retractall(numClauses(   _)), 
