@@ -40,8 +40,8 @@ room(R):-    rooms(N), between(1,N,R).
 day(D):-     between(1,5,D).
 hour(H):-    between(1,5,H).
 
-rooms(C, R) :- courseRooms(C, L), member(R, L).
-courses(S, C) :- student(S, L), member(C, L).
+rooms(C, R) :- courseRooms(C, L), member(R, L). % all availabe rooms of course C
+courses(S, C) :- student(S, L), member(C, L).   % all courses that student S attends to
 
 %%%%%%  Variables: It is mandatory to use these variables!
 % courseHour-C-D-H   meaning "course C is given on day D at hour H"
@@ -56,7 +56,7 @@ writeClauses(K):-
     noOverlappingC,			% each student has no overlapping courses in his schedule
     eachSatMost3HperD,      % each student has at most 3 hours per day
     defineLate,             % definition of late-D
-    atMostKLates(K).        % at mot k late days
+    atMostKLates(K).        % at most k late days
 
 eachCExactly3H :-
     course(C),
@@ -181,22 +181,21 @@ minimize(K):-
     treatResult(Result, K), !.
 
 writeBest(1) :- 
-    write('Solution found with 1 late day:'), nl,
+    write('Solution found with 1 late day:'), nl, shell('sleep 1'),
     see(bestModel), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
 
 writeBest(K) :- 
-    write('Solution found with '), write(K), write(' late days:'), nl,
+    write('Solution found with '), write(K), write(' late days:'), nl, shell('sleep 1'),
     see(bestModel), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
 
-treatResult(0, 5) :- write('Probably unsatisfiable(decision limit exceeded)'), nl, halt.
-treatResult(0, K) :- write('Probably unsatisfiable(decision limit exceeded)'), nl, nl, nl, K1 is K+1, writeBest(K1).
+% We treat result depending of the value returned by picosat and the initial value to minimize
+% Since there are 5 days, we start at 5 and we go to zero
+treatResult(0, 5)  :- write('Probably unsatisfiable(decision limit exceeded)'), nl, halt.
+treatResult(0, K)  :- write('Probably unsatisfiable(decision limit exceeded)'), nl, nl, nl, K1 is K+1, writeBest(K1).
 treatResult(20, 5) :- write('Unsatisfiable'), nl, halt.
 treatResult(20, K) :- write('UNSATISFIABLE'), nl, nl, K1 is K+1, writeBest(K1).
 treatResult(10, 0) :- write('Solution found with no late days: '), nl, see(model), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
 treatResult(10, K) :- write('SATISFIABLE'), nl, nl, K1 is K-1, shell('cp model bestModel'), minimize(K1).
-
-%treatResult(20):- write('Unsatisfiable'), nl, halt.
-%treatResult(10):- write('Solution found: '), nl, see(model), symbolicModel(M), seen, displaySol(M), nl,nl,halt.
 
 initClauseGeneration:-  %initialize all info about variables and clauses:
     retractall(numClauses(   _)), 

@@ -47,26 +47,25 @@ wbit(0):- write('   '), !.
 listVars(0, []) :- !.
 listVars(N, [_|L1]) :- N1 is N-1, listVars(N1, L1).
 
+% splitAt(N, L, First, Rest) : First are the first N elements of L and Rest are the rest
 splitAt(0, Rest, [], Rest) :- !.
 splitAt(N, [H|T], [H|First], Rest) :- 
 	N1 is N-1,
 	splitAt(N1, T, First, Rest).
 
+% Create a MatrixByRows from list L, we take NumCols elements at each step
+% We assume that Numcols divides L
 matrixByRows([], _, []) :- !.
 matrixByRows(L, NumCols, [FirstN | MatrixByRows]) :- 
 	splitAt(NumCols, L, FirstN, Rest),
 	matrixByRows(Rest, NumCols, MatrixByRows).
 
+% The sum of all elements of L must be equal to N
 correctSum(L, N) :- sum(L, #=, N).
 
+% With maplist we apply correctSum to all elements of both MatrixByRows and RowSums lists 
 declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums) :-
 	maplist(correctSum, MatrixByRows, RowSums),
 	maplist(correctSum, MatrixByCols, ColSums).
-
-%declareConstraints([MR|MatrixByRows], [MC|MatrixByCols], [RS|RowSums], [CS|ColSums]) :-
-%	sum(MR, #=, RS),
-%	sum(MC, #=, CS),
-%	declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums).
-%declareConstraints([], [], [], []).
 
 main :- p, nl, halt.
