@@ -67,5 +67,6 @@ correctSum(L, N) :- sum(L, #=, N).
 declareConstraints(MatrixByRows, MatrixByCols, RowSums, ColSums) :-
 	maplist(correctSum, MatrixByRows, RowSums),
 	maplist(correctSum, MatrixByCols, ColSums).
+	
 
 main :- p, nl, halt.

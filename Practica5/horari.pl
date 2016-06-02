@@ -49,11 +49,11 @@ courses(S, C) :- student(S, L), member(C, L).   % all courses that student S att
 % late-D             meaning "there is some course at 13:00 on day D"
 
 writeClauses(K):-
-    eachCExactly3H,         % each course has 3 teaching hours per week
+    eachCExactly3H,         % each course has exactly 3 teaching hours per week
     eachC3DifferentD,       % each course hour is distributed in 3 different days
     eachCExactly1R,         % each course has exactly one valid room assigned
     eachRAtMost1CPerH,      % each room can host one course at most on same day and hour
-    noOverlappingC,			% each student has no overlapping courses in his schedule
+    noOverlappingC,         % each student has no overlapping courses in his schedule
     eachSatMost3HperD,      % each student has at most 3 hours per day
     defineLate,             % definition of late-D
     atMostKLates(K).        % at most k late days
@@ -77,15 +77,15 @@ eachCExactly1R :-
 eachCExactly1R.
 
 eachRAtMost1CPerH :-
-	day(D), hour(H), room(R), course(C1), course(C2), C1 \= C2,
-	writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H, \+courseRoom-C1-R, \+courseRoom-C2-R]),
-	fail.
+        day(D), hour(H), room(R), course(C1), course(C2), C1 \= C2,
+        writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H, \+courseRoom-C1-R, \+courseRoom-C2-R]),
+        fail.
 eachRAtMost1CPerH.
 
 noOverlappingC :-
-	student(S), day(D), hour(H),
-	findall(courseHour-C-D-H, (courses(S, C)), Lits),
-	atMost(1, Lits), fail.
+        student(S), day(D), hour(H),
+        findall(courseHour-C-D-H, courses(S, C), Lits),
+        atMost(1, Lits), fail.
 noOverlappingC.
 
 eachSatMost3HperD :-
@@ -96,8 +96,6 @@ eachSatMost3HperD.
 
 defineLate :-
     day(D), course(C),
-    %findall(course-C-D-5, course(C), Lits),
-    %expressOr(late-D, Lits), fail.
     writeClause([\+courseHour-C-D-5, late-D]), fail.
 defineLate.
 
@@ -105,7 +103,6 @@ atMostKLates(K) :-
     findall(late-D, day(D), Lits),
     atMost(K, Lits), fail.
 atMostKLates(_).
-
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% show the solution. Here M contains the literals that are true in the model:
@@ -177,7 +174,7 @@ minimize(K):-
     shell('cat header clauses > infile.cnf'),
     write('late-D can be at most '), write(K), nl,
     write('Calling solver....'), nl,
-    shell('picosat -v -l 100000 -o model infile.cnf', Result),  % if sat: Result=10; if unsat: Result=20.
+    shell('picosat -v -l 100000 -o model infile.cnf', Result),  % if sat: Result=10; if unsat: Result=20; if .
     treatResult(Result, K), !.
 
 writeBest(1) :- 
@@ -190,6 +187,7 @@ writeBest(K) :-
 
 % We treat result depending of the value returned by picosat and the initial value to minimize
 % Since there are 5 days, we start at 5 and we go to zero
+% In order to avoid to recalculate the best model found, we save last model in an auxiliary file bestModel
 treatResult(0, 5)  :- write('Probably unsatisfiable(decision limit exceeded)'), nl, halt.
 treatResult(0, K)  :- write('Probably unsatisfiable(decision limit exceeded)'), nl, nl, nl, K1 is K+1, writeBest(K1).
 treatResult(20, 5) :- write('Unsatisfiable'), nl, halt.
