@@ -77,15 +77,15 @@ eachCExactly1R :-
 eachCExactly1R.
 
 eachRAtMost1CPerH :-
-        day(D), hour(H), room(R), course(C1), course(C2), C1 \= C2,
-        writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H, \+courseRoom-C1-R, \+courseRoom-C2-R]),
-        fail.
+    day(D), hour(H), room(R), course(C1), course(C2), C1 \= C2,
+    writeClause([\+courseHour-C1-D-H, \+courseHour-C2-D-H, \+courseRoom-C1-R, \+courseRoom-C2-R]),
+    fail.
 eachRAtMost1CPerH.
 
 noOverlappingC :-
-        student(S), day(D), hour(H),
-        findall(courseHour-C-D-H, courses(S, C), Lits),
-        atMost(1, Lits), fail.
+    student(S), day(D), hour(H),
+    findall(courseHour-C-D-H, courses(S, C), Lits),
+    atMost(1, Lits), fail.
 noOverlappingC.
 
 eachSatMost3HperD :-
